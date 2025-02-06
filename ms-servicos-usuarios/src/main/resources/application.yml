@@ -1,19 +1,22 @@
 server:
   port: 8095
+
 spring:
   application:
     name: user-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydatabase?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useTimezone=true&serverTimezone=America/saopaulo
-    username: myuser
-    password: secret
-
+    url: jdbc:postgresql://localhost:3306/users?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useTimezone=true&serverTimezone=America/saopaulo
+    username: root
+    password: root
   jpa:
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
     hibernate:
-      dll-auto: update
+      dll-auto: none
       format_sql: true
 eureka:
   client:
@@ -30,8 +33,7 @@ openapi:
     title: test-service doc
     version: 1.0.0
     url: http://localhost:8888 #api gateway url
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+
 springdoc:
   api-docs:
     path: user-service/v3/api-docs
