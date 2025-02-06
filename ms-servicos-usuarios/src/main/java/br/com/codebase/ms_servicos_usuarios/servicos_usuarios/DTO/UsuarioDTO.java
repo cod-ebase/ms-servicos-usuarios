@@ -1,6 +1,5 @@
 package br.com.codebase.ms_servicos_usuarios.servicos_usuarios.DTO;
 
-import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.models.PerfilUsuario;
 import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.models.Sexo;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,8 +8,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDate;
 
 @AllArgsConstructor
 @Builder
@@ -26,7 +23,6 @@ public class UsuarioDTO {
     private String foto;
     @Size(min = 6, message = "Senha deve ter pelo menos 6 caracteres")
     private String senha;
-    //Adicionar validação de data de nascimento no futuro
     @NotNull
-    private LocalDate nascimento;
+    private String nascimento;
 }

@@ -1,6 +1,7 @@
 package br.com.codebase.ms_servicos_usuarios.servicos_usuarios.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /*
 Admin    -> Admin- será agente que criou o app
@@ -47,4 +49,7 @@ public class Usuario {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "data_ultima_modificacao")
     private Instant dataUltimaModificacao;
+    public void setDataDeNascimento(@NotNull String dataNascimento) {
+        this.dataDeNascimento = LocalDate.parse(dataNascimento, DateTimeFormatter.ISO_LOCAL_DATE);
+    }
 }

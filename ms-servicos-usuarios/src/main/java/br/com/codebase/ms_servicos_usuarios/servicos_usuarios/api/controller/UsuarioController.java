@@ -1,8 +1,8 @@
-package br.com.codebase.ms_servicos_usuarios.servicos_usuarios.Controller;
+package br.com.codebase.ms_servicos_usuarios.servicos_usuarios.api.controller;
 
 import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.DTO.UsuarioDTO;
+import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.DTO.UsuarioResponseDTO;
 import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.Services.UserService;
-import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.models.Usuario;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +20,17 @@ public class UsuarioController {
     private UserService userService;
     // Endpoint privado (apenas ADMIN)
     @PostMapping("/admin")
-    public ResponseEntity<Usuario> createAdmin(@Valid @RequestBody UsuarioDTO request) {
+    public ResponseEntity<UsuarioResponseDTO> createAdmin(@Valid @RequestBody UsuarioDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createAdmin(request));
     }
     // Endpoint público
     @PostMapping("/parceiro")
-    public ResponseEntity<Usuario> createParceiro(@Valid @RequestBody UsuarioDTO request) {
+    public ResponseEntity<UsuarioResponseDTO> createParceiro(@Valid @RequestBody UsuarioDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createParceiro(request));
     }
     // Endpoint público
     @PostMapping("/cliente")
-    public ResponseEntity<Usuario> createCliente(@Valid @RequestBody UsuarioDTO request) {
+    public ResponseEntity<UsuarioResponseDTO> createCliente(@Valid @RequestBody UsuarioDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createCliente(request));
     }
 }

@@ -1,15 +1,13 @@
 package br.com.codebase.ms_servicos_usuarios.servicos_usuarios.Services;
 
 import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.DTO.UsuarioDTO;
+import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.DTO.UsuarioResponseDTO;
 import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.Mappers.UserMapper;
 import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.Repository.UsuarioRepository;
 import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.models.PerfilUsuario;
-import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.models.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,20 +15,22 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class UserService {
     private UsuarioRepository usuarioRepository;
-    private PasswordEncoder passwordEncoder;
-    @PreAuthorize("hasRole('ADMIN')")
-    public Usuario createAdmin(UsuarioDTO usuarioDTO) {
+    private EncodePasswordService encodePasswordService;
+    public UsuarioResponseDTO createAdmin(UsuarioDTO usuarioDTO) {
         return createUser(usuarioDTO, PerfilUsuario.ADMIN);
     }
-    public Usuario createParceiro(UsuarioDTO usuarioDTO) {
+    public UsuarioResponseDTO createParceiro(UsuarioDTO usuarioDTO) {
         return createUser(usuarioDTO, PerfilUsuario.PARCEIRO);
     }
-    public Usuario createCliente(UsuarioDTO usuarioDTO) {
+    public UsuarioResponseDTO createCliente(UsuarioDTO usuarioDTO) {
         return createUser(usuarioDTO, PerfilUsuario.CLIENT);
     }
-    private Usuario createUser(UsuarioDTO usuarioDTO, PerfilUsuario perfil) {
+    private UsuarioResponseDTO createUser(UsuarioDTO usuarioDTO, PerfilUsuario perfil) {
+        System.out.println(usuarioDTO);
         var user = UserMapper.toUsuario(usuarioDTO);
         user.setPerfil(perfil);
-        return usuarioRepository.save(user);
+        user.setSenha(encodePasswordService.encode(usuarioDTO.getSenha()));
+        usuarioRepository.save(user);
+        return new UsuarioResponseDTO("Usuário %s salvo!".formatted(user.getNome()), "token-do-spring-security");
     }
 }
