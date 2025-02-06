@@ -5,16 +5,16 @@ spring:
   application:
     name: ms-servicos-usuarios
   datasource:
-    url: jdbc:postgresql://localhost:5432/users
-    username: postgres
-    password: root
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        jdbc:
-          lob:
-            non_contextual_creation: true
+        dialect: org.hibernate.dialect.MySQLDialect
+#        jdbc:
+#          lob:
+#            non_contextual_creation: true
     hibernate:
       dll-auto: none
       format_sql: true
