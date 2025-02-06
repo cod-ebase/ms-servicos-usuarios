@@ -5,13 +5,16 @@ spring:
   application:
     name: user-service
   datasource:
-    url: jdbc:postgresql://localhost:3306/users?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useTimezone=true&serverTimezone=America/saopaulo
-    username: root
+    url: jdbc:postgresql://localhost:5432/users
+    username: postgres
     password: root
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
     hibernate:
       dll-auto: none
       format_sql: true
