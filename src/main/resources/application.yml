@@ -28,14 +28,14 @@ eureka:
     hostname: localhost
     prefer-ip-address: true
 
-openapi:
-  service:
-    title: test-service doc
-    version: 1.0.0
-    url: http://localhost:8888 #api gateway url
+#openapi:
+#  service:
+#    title: test-service doc
+#    version: 1.0.0
+#    url: http://localhost:8888 #api gateway url
 
-springdoc:
-  api-docs:
-    path: user-service/v3/api-docs
-  swagger-ui:
-    path: user-service/swagger-ui.html
+#springdoc:
+#  api-docs:
+#    path: user-service/v3/api-docs
+#  swagger-ui:
+#    path: user-service/swagger-ui.html
