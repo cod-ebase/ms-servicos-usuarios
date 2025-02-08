@@ -1,0 +1,41 @@
+server:
+  port: 8095
+
+spring:
+  application:
+    name: ms-servicos-usuarios
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+#        jdbc:
+#          lob:
+#            non_contextual_creation: true
+    hibernate:
+      dll-auto: none
+      format_sql: true
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+
+#openapi:
+#  service:
+#    title: test-service doc
+#    version: 1.0.0
+#    url: http://localhost:8888 #api gateway url
+
+#springdoc:
+#  api-docs:
+#    path: user-service/v3/api-docs
+#  swagger-ui:
+#    path: user-service/swagger-ui.html
