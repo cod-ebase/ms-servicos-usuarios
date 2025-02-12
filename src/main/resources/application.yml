@@ -3,18 +3,21 @@ server:
 
 spring:
   application:
-    name: user-service
+    name: ms-servicos-usuarios
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydatabase
-    username: myuser
-    password: secret
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+#    url: jdbc:postgresql://localhost:5432/mydatabase
+#    username: myuser
+#    password: secret
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-        jdbc:
-          lob:
-            non_contextual_creation: true
+#        jdbc:
+#          lob:
+#            non_contextual_creation: true
     hibernate:
       dll-auto: none
       format_sql: true
@@ -28,14 +31,14 @@ eureka:
     hostname: localhost
     prefer-ip-address: true
 
-openapi:
-  service:
-    title: test-service doc
-    version: 1.0.0
-    url: http://localhost:8888 #api gateway url
+#openapi:
+#  service:
+#    title: test-service doc
+#    version: 1.0.0
+#    url: http://localhost:8888 #api gateway url
 
-springdoc:
-  api-docs:
-    path: user-service/v3/api-docs
-  swagger-ui:
-    path: user-service/swagger-ui.html
+#springdoc:
+#  api-docs:
+#    path: user-service/v3/api-docs
+#  swagger-ui:
+#    path: user-service/swagger-ui.html

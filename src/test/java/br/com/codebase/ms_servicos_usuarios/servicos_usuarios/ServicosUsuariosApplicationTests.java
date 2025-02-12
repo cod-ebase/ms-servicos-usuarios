@@ -1,8 +1,5 @@
 package br.com.codebase.ms_servicos_usuarios.servicos_usuarios;
 
-import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.DTO.UsuarioDTO;
-import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.Mappers.UserMapper;
-import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.models.Sexo;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
