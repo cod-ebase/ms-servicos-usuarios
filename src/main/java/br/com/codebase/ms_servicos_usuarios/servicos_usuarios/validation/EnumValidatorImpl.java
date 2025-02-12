@@ -14,10 +14,11 @@ public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Str
         ConstraintValidator.super.initialize(constraintAnnotation);
         this.valoresPermitidos = Arrays.stream(constraintAnnotation.enumClass().getEnumConstants())
                                        .map(Enum::toString)
+                                       .map(String::toLowerCase)
                                        .collect(Collectors.toSet());
     }
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return value != null && valoresPermitidos.contains(value);
+        return value != null && valoresPermitidos.contains(value.toLowerCase());
     }
 }
