@@ -8,9 +8,7 @@ spring:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
-#    url: jdbc:postgresql://localhost:5432/mydatabase
-#    username: myuser
-#    password: secret
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     properties:
       hibernate:
