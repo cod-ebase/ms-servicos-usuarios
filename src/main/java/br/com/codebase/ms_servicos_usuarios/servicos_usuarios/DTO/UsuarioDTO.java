@@ -3,10 +3,8 @@ package br.com.codebase.ms_servicos_usuarios.servicos_usuarios.DTO;
 import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.models.PerfilUsuario;
 import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.models.Sexo;
 import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.validation.EnumValidator;
-import jakarta.validation.MessageInterpolator;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +27,6 @@ public class UsuarioDTO {
     private String senha;
     @EnumValidator(enumClass = PerfilUsuario.class)
     private String perfil;
-    @DateTimeFormat(iso= DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private String nascimento;
 }
