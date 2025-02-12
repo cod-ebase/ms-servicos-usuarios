@@ -18,19 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 public class UsuarioController {
     private UserService userService;
-    // Endpoint privado (apenas ADMIN)
-    @PostMapping("/admin")
-    public ResponseEntity<UsuarioResponseDTO> createAdmin(@Valid @RequestBody UsuarioDTO request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createAdmin(request));
-    }
-    // Endpoint público
-    @PostMapping("/parceiro")
-    public ResponseEntity<UsuarioResponseDTO> createParceiro(@Valid @RequestBody UsuarioDTO request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createParceiro(request));
-    }
-    // Endpoint público
-    @PostMapping("/cliente")
-    public ResponseEntity<UsuarioResponseDTO> createCliente(@Valid @RequestBody UsuarioDTO request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createCliente(request));
+    @PostMapping("/create")
+    public ResponseEntity<UsuarioResponseDTO> create(@Valid @RequestBody UsuarioDTO request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
     }
 }

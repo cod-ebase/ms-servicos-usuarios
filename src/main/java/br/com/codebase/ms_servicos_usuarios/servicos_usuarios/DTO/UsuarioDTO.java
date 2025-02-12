@@ -20,7 +20,7 @@ public class UsuarioDTO {
     @Email(message = "Email inválido")
     private String email;
     @EnumValidator(enumClass = Sexo.class, message = "O campo Sexo é Obrigatório")
-    private Sexo sexo;
+    private String sexo;
     @NotBlank(message = "Uma foto é obrigatória")
     private String foto;
     @Size(min = 6, message = "Senha deve ter pelo menos 6 caracteres")

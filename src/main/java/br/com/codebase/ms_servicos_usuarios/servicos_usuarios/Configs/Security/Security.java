@@ -2,7 +2,7 @@ package br.com.codebase.ms_servicos_usuarios.servicos_usuarios.Configs.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -15,8 +15,16 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class Security {
-
+    private static void CustomRequestMatchers(
+            AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry matcherRegistry) {
+        matcherRegistry.anyRequest()
+                       .permitAll();                                                      // outros endpoints abertos
+    }
+    private static void CreateStateLessCreationPolicy(SessionManagementConfigurer<HttpSecurity> session) {
+        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
     /*
      * algorítimo vencedor em competição de hash
      * Eficiente contra ataques de força bruta
@@ -32,13 +40,5 @@ public class Security {
             .sessionManagement(Security::CreateStateLessCreationPolicy)
             .authorizeHttpRequests(Security::CustomRequestMatchers);
         return http.build();
-    }
-    private static void CustomRequestMatchers(
-            AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry matcherRegistry) {
-        matcherRegistry.requestMatchers(HttpMethod.POST, "/api/users/admin").hasRole("ADMIN") // apenas user logado pode criar outros
-                       .anyRequest().permitAll();                                                      // outros endpoints abertos
-    }
-    private static void CreateStateLessCreationPolicy(SessionManagementConfigurer<HttpSecurity> session) {
-        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 }
