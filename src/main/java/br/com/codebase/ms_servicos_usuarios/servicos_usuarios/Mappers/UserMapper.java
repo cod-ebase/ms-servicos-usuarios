@@ -24,10 +24,9 @@ public final class UserMapper {
     }
     public static UsuarioResponseDTO toUsuarioResponseDTO(UsuarioDTO usuario) {
         return new ModelMapper().typeMap(UsuarioDTO.class, UsuarioResponseDTO.class).addMappings(m -> {
-            m.map(UsuarioDTO::getNome,UsuarioResponseDTO::setNome);;
+            m.map(UsuarioDTO::getNome,UsuarioResponseDTO::setNome);
             m.map(UsuarioDTO::getEmail,UsuarioResponseDTO::setEmail);
-            m.map(UsuarioDTO::getPerfil,UsuarioResponseDTO::setMessage);
-            m.map(UsuarioDTO::getFoto,UsuarioResponseDTO::setMessage);
+            m.map(UsuarioDTO::getPerfil,UsuarioResponseDTO::setPerfil);
         }).map(usuario);
     }
 }
