@@ -15,15 +15,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Builder
 @Data
 public class UsuarioDTO {
-    @NotBlank(message = "Nome é obrigatório")
+    @NotBlank(message = "{validation.usuario.nome}")
     private String nome;
-    @Email(message = "Email inválido")
+    @Email(message = "{validation.usuario.email}")
     private String email;
-    @EnumValidator(enumClass = Sexo.class, message = "O campo Sexo é Obrigatório")
+    @EnumValidator(enumClass = Sexo.class, message = "{validation.usuario.sexo}")
     private String sexo;
-    @NotBlank(message = "Uma foto é obrigatória")
+    @NotBlank(message = "{validation.usuario.foto}")
     private String foto;
-    @Size(min = 6, message = "Senha deve ter pelo menos 6 caracteres")
+    @Size(min = 6, message = "{validation.usuario.senha}")
     private String senha;
     @EnumValidator(enumClass = PerfilUsuario.class)
     private String perfil;

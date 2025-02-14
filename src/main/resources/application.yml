@@ -19,6 +19,10 @@ spring:
     hibernate:
       dll-auto: none
       format_sql: true
+  messages:
+    basename: messages
+    encoding: UTF-8
+
 eureka:
   client:
     register-with-eureka: true
