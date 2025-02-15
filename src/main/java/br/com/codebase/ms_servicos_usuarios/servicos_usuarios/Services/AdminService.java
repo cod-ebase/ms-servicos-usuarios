@@ -9,14 +9,14 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class AdminService {
-    @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
-    /**
+    /*
      * Esse método é chamado para verificar
      *  Se existe usuário autenticado
      *  E a role desse usuário é ADMIN
      * Dessa forma, é garantido que somente admins possam registrar outros admins
      * */
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void AdminCreationValidation(UsuarioDTO usuarioDTO) {
         log.info("Registrando usuário admin: {}, {}", usuarioDTO.getNome(), usuarioDTO.getEmail());
     }
