@@ -1,32 +1,33 @@
 package br.com.codebase.ms_servicos_usuarios.servicos_usuarios.api.controllerTests;
 
 import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.DTO.UsuarioDTO;
-import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.DTO.UsuarioResponseDTO;
 import br.com.codebase.ms_servicos_usuarios.servicos_usuarios.Repository.UsuarioRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
-@AllArgsConstructor(onConstructor = @__(@Autowired))
 @SpringBootTest
+@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AutoConfigureMockMvc
 public class UsuarioControllerTest {
-    private final TestRestTemplate restTemplate = new TestRestTemplate(
-            TestRestTemplate.HttpClientOption.ENABLE_COOKIES);
-    private final String ENDPOINT_URL = "/api/users/create";
-    private final String BASE_URL = "http://localhost:8095";
+    private static final String BASE_URL = "http://localhost:8095";
+    private static final String ENDPOINT_URL = "/api/users/create";
+    @Autowired
+    private MockMvc mock;
+    private ObjectMapper objectMapper;
     private UsuarioRepository usuarioRepository;
     @BeforeEach
     void LimpaTodosUsuarios() {
@@ -34,62 +35,84 @@ public class UsuarioControllerTest {
         usuarioRepository.deleteAll();
     }
     @Test
-    public void createUsuario_Sucesso() {
+    @WithMockUser(roles = "ADMIN")
+    public void createUsuario_ADMIN_Sucesso() throws Exception {
         var userDTO = gerarUsuarioDTO();
-        HttpEntity<UsuarioDTO> request = new HttpEntity<>(userDTO);
-        var response = restTemplate.postForEntity(BASE_URL + ENDPOINT_URL, request, UsuarioResponseDTO.class);
-        assertNotNull(response.getBody());
-        var b = response.getBody();
-        Assertions.assertAll(() -> assertEquals(HttpStatus.CREATED, response.getStatusCode()),
-                             () -> assertEquals(b.getEmail(), userDTO.getEmail()),
-                             () -> assertEquals(b.getNome(), userDTO.getNome()),
-                             () -> assertEquals(b.getPerfil(), userDTO.getPerfil()),
-                             () -> assertEquals("Usuário criado com sucesso!", b.getMessage()));
+        userDTO.setPerfil("ADMIN");
+        var result = performMockUserRegistrationAndLog(userDTO);
+        expectSuccessUserRegistration(result, userDTO);
+    }
+    /**
+     * Método responsável pelo registro de usuário, exceto caso o usuário tenha ROLE ADMIN.
+     *
+     * @throws Exception lançada caso ocorra algum erro no teste.
+     */
+    @Test
+    public void createUsuario_Sucesso() throws Exception {
+        var userDTO = gerarUsuarioDTO();
+        var result = performMockUserRegistrationAndLog(userDTO);
+        expectSuccessUserRegistration(result, userDTO);
     }
     @Test
-    public void createUsuario_Senha_Email_Falha() {
+    public void createUsuario_Senha_Email_Falha() throws Exception {
         var userDTO = gerarUsuarioDTO();
-        // inválido, senha com tamanho menor que 6
-        userDTO.setSenha("pass");
-        // inválido email
-        userDTO.setEmail("email_email.com");
-        var request = new HttpEntity<>(userDTO);
-        var response = restTemplate.postForEntity(BASE_URL + ENDPOINT_URL, request, Map.class);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "O status http deve ser BAD_REQUEST");
-        var body = response.getBody();
-        assertNotNull(body, "O corpo da resposta não deve ser nulo");
-        Assertions.assertAll("Erros de validação esperados",
-                             () -> assertNotNull(body.get("senha"), "Deve existir erro para 'senha'"),
-                             () -> assertNotNull(body.get("email"), "Deve existir erro para 'email'"));
-        log.info("Erro de senha: {}", body.remove("senha"));
-        log.info("Erro de email: {}", body.remove("email"));
-        Assertions.assertTrue(body.isEmpty());
+        userDTO.setSenha("pass");            // inválido, senha com tamanho menor que 6
+        userDTO.setEmail("email_email.com"); // e-mail inválido
+        var result = performMockUserRegistrationAndLog(userDTO);
+        // verifica a ocorrência de erros de validação nos campos senha e e-mail.
+        result.andExpectAll(content().contentType(MediaType.APPLICATION_JSON),
+                            status().isBadRequest(),
+                            jsonPath("$.senha").exists(),
+                            jsonPath("$.email").exists(),
+                            jsonPath("$.size()").value(2));
     }
+    /*
+     * Método verifica a ocorrência de falha ao tentar registrar mais de um usuário com mesmo e-mail.
+     */
     @Test
-    public void checkDuplicidadeUsuario_CreateFail() {
+    public void emailJaExiste_Falha() throws Exception {
         var userDTO = gerarUsuarioDTO();
-        HttpEntity<UsuarioDTO> request = new HttpEntity<>(userDTO);
-        var responseForFirstUsers = restTemplate.postForEntity(BASE_URL + ENDPOINT_URL, request,
-                                                               UsuarioResponseDTO.class);
-        assertEquals(HttpStatus.CREATED, responseForFirstUsers.getStatusCode());
-        assertNotNull(responseForFirstUsers.getBody());
-        assertEquals("Usuário criado com sucesso!", responseForFirstUsers.getBody().getMessage());
-        var responseForDupEmail = restTemplate.postForEntity(BASE_URL + ENDPOINT_URL, request, Map.class);
-        assertEquals(HttpStatus.CONFLICT, responseForDupEmail.getStatusCode());
-        assertNotNull(responseForDupEmail.getBody());
-        log.info("Erro: {}", responseForDupEmail.getBody().remove("email"));
-        Assertions.assertTrue(responseForDupEmail.getBody().isEmpty());
+        ///  usuário é registrado pela primeira vez com sucesso...
+        var result1 = performMockUserRegistrationAndLog(userDTO);
+        expectSuccessUserRegistration(result1, userDTO);
+        var result = performMockUserRegistrationAndLog(userDTO);
+        /// Verifica a ocorrência de conflito ao tentar registrar dois usuários com mesmo e-mail
+        result.andExpectAll(content().contentType(MediaType.APPLICATION_JSON),
+                            status().isConflict(),
+                            jsonPath("$.email").exists(),
+                            jsonPath("$.size()").value(1));
     }
     private UsuarioDTO gerarUsuarioDTO() {
-        // retorna um exemplo de registro de usuário que tende à todos os requisistos de validação
+        // retorna um exemplo de registro de usuário com todos os campos válidos
         return UsuarioDTO.builder()
-                         .email("email@email.com")
-                         .nome("Usuário_0")
-                         .senha("Senha123456")
-                         .nascimento("2000-01-28")
-                         .sexo("F")
-                         .perfil("CLIENT")
-                         .foto("path/to/png.png")
-                         .build();
+                .email("email@email.com")
+                .nome("Usuário_0")
+                .senha("Senha123456")
+                .nascimento("2000-01-28")
+                .sexo("F")
+                .perfil("CLIENT")
+                .foto("path/to/png.png")
+                .build();
+    }
+    /**
+     * @param objRequest objeto que descreve parâmetros da requisição
+     * @param <T>        parâmetro genérico para suportar objetos em requisições
+     * @return ResultActions
+     * @throws Exception caso o teste falhe.
+     */
+    private <T> ResultActions performMockUserRegistrationAndLog(T objRequest) throws Exception {
+        return mock.perform(post(BASE_URL + ENDPOINT_URL).contentType(MediaType.APPLICATION_JSON)
+                                                         .content(objectMapper.writeValueAsString(objRequest)))
+                   .andDo(r -> log.info("Response {}", r.getResponse().getContentAsString()));
+    }
+    private void expectSuccessUserRegistration(ResultActions result, UsuarioDTO userDTO) throws Exception {
+        result.andExpectAll(content().contentType(MediaType.APPLICATION_JSON),
+                            status().isCreated(),
+                            jsonPath("$.nome").value(userDTO.getNome()),
+                            jsonPath("$.email").value(userDTO.getEmail()),
+                            jsonPath("$.perfil").value(userDTO.getPerfil()),
+                            jsonPath("$.message").value("Usuário criado com sucesso!"),
+                            // garante que estão sendo retornados exatamente 4 mensagens definidas
+                            jsonPath("$.length()").value(4));
     }
 }
