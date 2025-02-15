@@ -42,6 +42,13 @@ public class UsuarioControllerTest {
         var result = performMockUserRegistrationAndLog(userDTO);
         expectSuccessUserRegistration(result, userDTO);
     }
+    @Test
+    public void createUsuario_ADMIN_Falha() throws Exception {
+        var userDTO = gerarUsuarioDTO();
+        userDTO.setPerfil("ADMIN");
+        var result = performMockUserRegistrationAndLog(userDTO);
+        result.andExpect(status().isForbidden());
+    }
     /**
      * Método responsável pelo registro de usuário, exceto caso o usuário tenha ROLE ADMIN.
      *
