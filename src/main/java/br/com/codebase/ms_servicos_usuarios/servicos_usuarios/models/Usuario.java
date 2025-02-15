@@ -52,4 +52,7 @@ public class Usuario {
     public void setDataDeNascimento(@NotNull String dataNascimento) {
         this.dataDeNascimento = LocalDate.parse(dataNascimento, DateTimeFormatter.ISO_LOCAL_DATE);
     }
+    public void setPerfil(String perfil) {
+        this.perfil = PerfilUsuario.valueOf(perfil.toUpperCase());
+    }
 }
