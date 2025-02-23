@@ -4,7 +4,6 @@ CREATE TABLE Usuario (
     email VARCHAR(150) NOT NULL UNIQUE,
     nome VARCHAR(100) NOT NULL,
     perfil VARCHAR(50),
-    password varchar(255),
     sexo CHAR(1),
     foto TEXT,
     data_de_nascimento DATE,
